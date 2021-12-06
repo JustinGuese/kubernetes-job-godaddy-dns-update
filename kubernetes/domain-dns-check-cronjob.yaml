@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: domain-dns-check-godaddy
+spec:
+  schedule: "0 * * * *" # every hour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: domain-dns-check-godaddy
+            image: guestros/docker-godaddy-dns-updater:latest
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: GODADDY_MAINDOMAIN
+              value: datafortress.cloud # enter your main domain here
+            - name: GODADDY_SUBDOMAINS
+              value: covidapp-api,covidapp-obj,nextcloud # enter the subdomains you plan on updating here
+            - name: GODADDY_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: godaddy
+                  key: GODADDY_PUBLIC_KEY
+            - name: GODADDY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: godaddy
+                  key: GODADDY_SECRET
+          restartPolicy: OnFailure
+          volumes:
+          - name: domain-dns-check-godaddy-volume
+            persistentVolumeClaim:
+              claimName: domain-dns-check-godaddy-volume-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: domain-dns-check-godaddy-volume-claim
+  name: domain-dns-check-godaddy-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+status: {}
