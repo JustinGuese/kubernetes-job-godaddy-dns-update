@@ -36,9 +36,10 @@ def saveLastIP(ip):
         
 def updateIP(ip):
     for domain in SUBDOMAINS:
-        domain += "." + MAINDOMAIN
+        # domain += "." + MAINDOMAIN
         print("updating domain: " + domain)
-        client.update_record_ip(ip, domain, "dynamic", "A")
+        client.update_record_ip(ip, MAINDOMAIN, domain, "A")
+        # client.add_record(MAINDOMAIN, {'data' : ip, 'name' : domain, 'type' : 'A', 'ttl' : 604800})
     print("success! all domains updated to: " + ip)
     saveLastIP(ip)
 
