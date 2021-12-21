@@ -59,5 +59,6 @@ if server_ip != LAST_IP:
     print("Server IP has changed for {}".format(TESTDOMAIN))
     print("Current server IP: {}".format(server_ip))
     print("Current godaddy IP: {}".format(LAST_IP))
+    updateIP(server_ip)
 else:
     print("all good")
